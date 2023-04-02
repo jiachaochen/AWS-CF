@@ -11,7 +11,7 @@ Resources:
       ImageId: ami-0e82057f7434f0542
       Tags:
         - Key: Name
-          Value: !Join [ ":", [ Web, Server01 ] ]
+          Value: !Join [ ":", [ Web, Server01, !Ref AWS::Region ] ]
       SecurityGroups:
         - !Ref WebSecurityGroup
   WebSecurityGroup:
