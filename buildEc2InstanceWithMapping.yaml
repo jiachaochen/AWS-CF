@@ -3,6 +3,11 @@
 #Description:
 #Create EC2 instance using region mapping
 
+Parameters:
+  CustomKeyPair:
+    Description: "Name of existing key pairs"
+    Type: AWS::EC2::KeyPair::KeyName
+
 Mappings:
   RegionMap:
     cn-north-1:
@@ -20,6 +25,7 @@ Resources:
         - RegionMap
         - !Ref AWS::Region
         - AMI
+      KeyName: !Ref CustomKeyPair
       Tags:
         - Key: Name
           Value: !Join [ ":", [ Web, Server01 ] ]
