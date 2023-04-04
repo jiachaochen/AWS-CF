@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Provision rdonly roles
+Parameters:
+  Account:
+    Description: Account Information
+    Type: String
+Resources:
+  ReadOnlyRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: rdonly
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - 
+            Effect: Allow
+            Principal:
+              AWS: 
+                - !Ref Account
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws-cn:iam::aws:policy/ReadOnlyAccess
