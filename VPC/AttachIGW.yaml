@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Provision IGW
+Parameters:
+  CustomVPCId:
+    Description: Custom VPC ID
+    Type: String
+Resources:
+  CustomIGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Env
+        Value: Production
+  AttachIGW:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref CustomIGW
+      VpcId: !Ref CustomVPCId

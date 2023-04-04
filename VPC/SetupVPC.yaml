@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create VPC with two subnets by default
+Parameters:
+  MainCIDR:
+    Description: MainCIDR
+    Type: String
+  SubCIDR1:
+    Description: Subnet CIDR
+    Type: String
+  SubCIDR2:
+    Description: Subnet CIDR
+    Type: String
+Mappings:
+  RegionAZ:
+    BeiJing:
+      azA: 'cn-north-1a'
+      azD: 'cn-north-1d'
+      azB: 'cn-north-1b'
+    NingXia:
+      azA: 'cn-northwest-1a'
+      azB: 'cn-northwest-1b'
+      azC: 'cn-northwest-1c'
+Resources:
+  CustomVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+        CidrBlock: !Ref MainCIDR
+        EnableDnsHostnames: True
+        EnableDnsSupport: True
+        InstanceTenancy: default
+        Tags:
+          - Key: Env
+            Value: Production
+  CustomPublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !FindInMap [ RegionAZ, BeiJing, azA ] 
+      CidrBlock: !Ref SubCIDR1
+      VpcId: !Ref CustomVPC
+      Tags:
+        - Key: Type
+          Value: Public
+  CustomPrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !FindInMap [ RegionAZ, BeiJing, azB ] 
+      CidrBlock: !Ref SubCIDR2
+      VpcId: !Ref CustomVPC
+      Tags:
+        - Key: Type
+          Value: Private
