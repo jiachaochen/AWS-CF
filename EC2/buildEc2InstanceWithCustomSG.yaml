@@ -1,0 +1,25 @@
+#Date: 2023-04-02
+#Author: Tony
+#Description:
+#Create EC2 instance with custom SG
+
+Resources:
+  Ec2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-0e82057f7434f0542
+      Tags:
+        - Key: Name
+          Value: !Join [ ":", [ Web, Server01, !Ref AWS::Region ] ]
+      SecurityGroups:
+        - !Ref WebSecurityGroup
+  WebSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access via 22
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
