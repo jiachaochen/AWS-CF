@@ -1,1 +1,1 @@
-AWS CloudFormation Script
+AWS CloudFormation Script to handle daily operation task.
