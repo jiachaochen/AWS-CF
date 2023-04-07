@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Define Jenkins task in AWS ECS"
+Resources:
+  JenkinsTask:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub jenkins-task
+      Cpu: 512
+      Memory: 1024
+      NetworkMode: awsvpc
+      TaskRoleArn: arn:awsxxxxx
+      ExecutionRoleArn: arn:awsxxxxx
+      RequiresCompatibilities:
+        - FARGATE
+        - EC2
+      ContainerDefinitions:
+        - Name: jenkins
+          Image: xxxxx.dkr.ecr.cn-north-1.amazonaws.com.cn/jenkins:xxxx
+          PortMappings:
+            - ContainerPort: 8080
+          MountPoints:
+            - SourceVolume: jenkins-home
+              ContainerPath: /var/jenkins_home
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref CloudwatchLogsGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: jenkins
+      Volumes:
+        - Name: jenkins-home
+          EFSVolumeConfiguration:
+            FilesystemId: xxxxx
+            TransitEncryption: ENABLED
+            AuthorizationConfig:
+              AccessPointId: xxxxxx
+              IAM: ENABLED
+  CloudwatchLogsGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Join ['-', [ECSLogGroup, !Ref 'AWS::StackName']]
+      RetentionInDays: 14

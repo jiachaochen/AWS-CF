@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create EFS which can be attached later on.
+Resources:
+  EfsSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: vpc-0xxxxx
+      GroupDescription: Secure EFS network access and open port 2049
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 2049
+          ToPort: 2049
+          SourceSecurityGroupId: sg-0xxxxxx
+  EfsShare:
+    Type: AWS::EFS::FileSystem
+    Properties:
+      Encrypted: true
+      FileSystemTags:
+        - Key: Name
+          Value: Jenkins-home
+  MountTarget1:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref EfsShare
+      SubnetId: subnet-0xxxxx
+      SecurityGroups:
+        - !GetAtt EfsSG.GroupId
+  MountTarget2:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref EfsShare
+      SubnetId: subnet-0xxxxx
+      SecurityGroups:
+        - !GetAtt EfsSG.GroupId
+  AccessPointResource:
+    Type: AWS::EFS::AccessPoint
+    Properties:
+      FileSystemId: !Ref EfsShare
+      PosixUser:
+        Uid: '1000'
+        Gid: '1000'
+      RootDirectory:
+        CreationInfo:
+          OwnerGid: '1000'
+          OwnerUid: '1000'
+          Permissions: '755'
+        Path: '/jenkins-home'
