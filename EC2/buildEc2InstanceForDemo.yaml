@@ -1,12 +1,23 @@
 #Date: 2023-04-02
 #Author: Tony
-
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Create EC2 instance with custom SG
+Description: Create EC2 instance with custom SG, VPC, KeyPair
 
 Parameters:
   ServerType:
     Description: Input instance type
+    Type: String
+  CustomVPC:
+    Description: Input VPC Id
+    Type: String
+  CustomSubnet:
+    Description: Input Subnet Id
+    Type: String
+  CustomKeyPair:
+    Description: Input Key Pair
+    Type: String
+  CustomTag:
+    Description: Input Tag
     Type: String
 
 Resources:
@@ -17,13 +28,16 @@ Resources:
       ImageId: ami-0e82057f7434f0542
       Tags:
         - Key: Name
-          Value: !Join [ ":", [ Web, Server02, !Ref AWS::Region ] ]
-      SecurityGroups:
-        - !Ref WebSecurityGroup
+          Value: !Join [ ":", [ !Ref CustomTag, !Ref AWS::Region ] ]
+      SubnetId: !Ref CustomSubnet
+      SecurityGroupIds: 
+        - !GetAtt WebSecurityGroup.GroupId
+      KeyName: !Ref CustomKeyPair
   WebSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: Enable SSH access via 22
+      VpcId: !Ref CustomVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: '22'
