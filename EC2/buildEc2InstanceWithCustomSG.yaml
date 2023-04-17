@@ -1,17 +1,23 @@
 #Date: 2023-04-02
 #Author: Tony
-#Description:
-#Create EC2 instance with custom SG
+
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create EC2 instance with custom SG
+
+Parameters:
+  ServerType:
+    Description: Input instance type
+    Type: String
 
 Resources:
   Ec2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      InstanceType: t2.micro
+      InstanceType: !Ref ServerType
       ImageId: ami-0e82057f7434f0542
       Tags:
         - Key: Name
-          Value: !Join [ ":", [ Web, Server01, !Ref AWS::Region ] ]
+          Value: !Join [ ":", [ Web, Server02, !Ref AWS::Region ] ]
       SecurityGroups:
         - !Ref WebSecurityGroup
   WebSecurityGroup:
